@@ -1,0 +1,48 @@
+{
+  "name": "bedrock-node-api",
+  "version": "1.0.3",
+  "description": "A simple Node API wrapper for Amazon Bedrock",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heythisischris/bedrock-node-api"
+  },
+  "author": {
+    "name": "Christopher Aitken",
+    "email": "chris@heythisischris.com",
+    "url": "https://heythisischris.com"
+  },
+  "homepage": "https://heythisischris.com",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc | true"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  },
+  "imports": {
+    "#src/*": "./dist/*"
+  },
+  "dependencies": {
+    "@aws-sdk/protocol-http": "^3.374.0",
+    "@aws-sdk/signature-v4-crt": "^3.418.0"
+  },
+  "keywords": [
+    "Amazon",
+    "Bedrock",
+    "AWS",
+    "LLM",
+    "AI21 Labs",
+    "Titan Embeddings G1",
+    "Titan Text G1",
+    "Anthropic",
+    "Claude",
+    "Claude Instant",
+    "Cohere Command",
+    "Stability AI",
+    "Stable Diffusion XL",
+    "Lambda"
+  ]
+}
