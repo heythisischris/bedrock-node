@@ -1,12 +1,12 @@
 {
-  "name": "bedrock-node-api",
-  "version": "1.0.3",
-  "description": "A simple Node API wrapper for Amazon Bedrock",
+  "name": "bedrock-node",
+  "version": "1.0.0",
+  "description": "A full-featured Node wrapper for Amazon Bedrock with function calling",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/heythisischris/bedrock-node-api"
+    "url": "https://github.com/heythisischris/bedrock-node"
   },
   "author": {
     "name": "Christopher Aitken",
@@ -17,17 +17,19 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "tsc | true"
+    "build": "tsc | true",
+    "build:test": "yarn install && tsc | true && yarn pack && cp ./bedrock-node-v1.0.0.tgz ../heythisischris-api/ && cd ../heythisischris-api/ && rm -rf node_modules && rm -f yarn.lock && yarn cache clean && yarn build"
   },
   "devDependencies": {
+    "@types/node": "^20.8.2",
     "typescript": "^5.2.2"
   },
   "imports": {
     "#src/*": "./dist/*"
   },
   "dependencies": {
-    "@aws-sdk/protocol-http": "^3.374.0",
-    "@aws-sdk/signature-v4-crt": "^3.418.0"
+    "@aws-sdk/client-bedrock-runtime": "^3.423.0",
+    "fast-xml-parser": "^4.3.2"
   },
   "keywords": [
     "Amazon",
@@ -43,6 +45,7 @@
     "Cohere Command",
     "Stability AI",
     "Stable Diffusion XL",
-    "Lambda"
+    "Lambda",
+    "Function Calling"
   ]
 }

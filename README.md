@@ -1,23 +1,17 @@
-# Bedrock Node API
+# Bedrock Node
 
-A simple Node API wrapper for Amazon Bedrock.
+A full-featured Node wrapper for Amazon Bedrock with function calling.
 
-Since the AWS SDK v3 for Javascript does not support any Bedrock calls at the moment, I decided to take matters into my own hands and create a simple and easy to use wrapper for interacting with Amazon's new suite of LLMs.
+This is a high-level Node library for Amazon Bedrock built on top of Amazon's officially supported `@aws-sdk/client-bedrock-runtime`.
+
+It exposes easy methods for generating chat completions w/ optional function calling, generating embeddings, and generating images. The function calling solution is inspired by Langchain's function calling implementation on top of Anthropic Claude: https://js.langchain.com/docs/modules/model_io/models/chat/integrations/anthropic_functions.
 
 ## Installation
 
 ### Basic install
 
 ```
-npm install bedrock-node-api
-```
-
-### Managing dependencies
-
-I decided not to bundle dependencies since many users will probably be running this inside of an AWS Lambda Node runtime, which includes `@aws-sdk/signature-v4-crt` and `@aws-sdk/protocol-http` by default. Otherwise, you'll have to include those packages.
-
-```
-npm install @aws-sdk/signature-v4-crt @aws-sdk/protocol-http
+yarn add bedrock-node
 ```
 
 ### Lambda permissions
@@ -45,17 +39,38 @@ If you're running this inside of AWS Lambda, make sure that you add an inline po
 ### Making a request
 
 ```
-import { BedrockClient } from 'bedrock-node-api';
+import { BedrockClient } from 'bedrock-node';
 const bedrockClient = new BedrockClient({
-    region: 'us-east-1', // Defaults to "us-east-1"
-    accessKey: '*****', // Pre-fills with process.env.AWS_ACCESS_KEY_ID
-    secretAccessKey: '*****', // Pre-fills with process.env.AWS_SECRET_ACCESS_KEY,
-    sessionToken: '*****', // process.env.AWS_SESSION_TOKEN
+    region: 'us-east-1',                // Defaults to 'us-east-1'
+    accessKey: '************',          // Defaults to process.env.AWS_ACCESS_KEY_ID
+    secretAccessKey: '************',    // Defaults to process.env.AWS_SECRET_ACCESS_KEY
+    sessionToken: '************',       // Defaults to process.env.AWS_SESSION_TOKEN
 });
 
 export const bedrock = async () => {
-    const response = await bedrockClient.invoke({
-        prompt: `\n\nHuman: What time is it?\n\nAssistant:`
+    const response = await bedrockClient({
+        messages: [
+            {
+                type: 'Assistant',
+                message: `You may only respond in the following XML shape:
+                    <response>
+                        <location type="string">
+                            New York, NY
+                        </location>
+                        <temperature type="number">
+                            81
+                        </temperature>
+                    </response>`
+            },
+            {
+                type: 'Human',
+                message: 'What is the weather in Miami, FL?'
+            },
+            {
+                type: 'Assistant',
+                message: '<response>'
+            },
+        ]
     });
     return response;
 }
@@ -65,7 +80,10 @@ export const bedrock = async () => {
 
 ```
 {
-    completion: " Hello! I'm Claude, an AI assistant created by Anthropic.",
-    stop_reason: 'stop_sequence'
+    "response": "\n  <location type=\"string\">Miami, FL</location>  \n  <temperature type=\"number\">85</temperature>\n</response>",
+    "object": {
+        "location": "Miami, FL",
+        "temperature": 85
+    }
 }
 ```
